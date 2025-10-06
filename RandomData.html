@@ -11,7 +11,7 @@
       font-family: Arial, Arial;
       margin: 0;
       padding: 0;
-      background-color: #FFFFFF; /* #B9D9EB, #4B9CD3, #6699CC,  */
+      background-color: #4682B4; /* #B9D9EB, #4B9CD3, #6699CC,#6082B6  */
 	  
 	  
       color: #FFFFFF;
@@ -80,59 +80,53 @@
   
   
   <h1>Random Data Generator</h1>
- const generateButton = document.getElementById("generateButton");
-const randomNameElement = document.getElementById("randomName");
-const randomSSNElement = document.getElementById("randomSSN");
-const randomDOBElement = document.getElementById("randomDOB");
+  <button id="generateButton">Generate Random Data</button>
+  <p id="randomName"></p>
+  <p id="randomSSN"></p>
+  <p id="randomDOB"></p>
+</div>
 
-generateButton.addEventListener("click", function() {
-  const randomIndex = Math.floor(Math.random() * alphabet.length);
-  const randomLetter = alphabet[randomIndex];
-  const randomSSN = getRandomSSN();
-  const randomDOB = getRandomDOB();
+<script>
+  const generateButton = document.getElementById("generateButton");
+  const randomNameElement = document.getElementById("randomName");
+  const randomSSNElement = document.getElementById("randomSSN");
+  const randomDOBElement = document.getElementById("randomDOB");
 
-  randomSSNElement.textContent = "SSN: " + randomSSN;
-  randomDOBElement.textContent = "Date of Birth: " + randomDOB;
-});
+  generateButton.addEventListener("click", generateRandomProfile);
 
-async function generateRandomProfile() {
-  const res = await fetch("https://randomuser.me/api/?inc=name&nat=us");
-  const data = await res.json();
-  const { first, last } = data.results[0].name;
-  const randomSSN = getRandomSSN();
-  const randomDOB = getRandomDOB();
+  async function generateRandomProfile() {
+    try {
+      const res = await fetch("https://randomuser.me/api/?inc=name&nat=us");
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      const data = await res.json();
+      const { first, last } = data.results[0].name;
 
-  randomNameElement.textContent = `Name: ${first} ${last}`;
-  randomSSNElement.textContent = `SSN: ${randomSSN}`;
-  randomDOBElement.textContent = `Date of Birth: ${randomDOB}`;
-}
+      const randomSSN = getRandomSSN();
+      const randomDOB = getRandomDOB();
 
-generateButton.addEventListener("click", generateRandomProfile);
-
+      randomNameElement.textContent = `Name: ${first} ${last}`;
+      randomSSNElement.textContent = `SSN: ${randomSSN}`;
+      randomDOBElement.textContent = `Date of Birth: ${randomDOB}`;
+    } 
+catch (err) {
+      console.error("Fetch error:", err);
+      randomNameElement.textContent = "";
+    }
   }
 
-  return name;
-}
+  function getRandomSSN() {
+    const randomDigits = Math.floor(Math.random() * 1e9);
+    const ssnStr = String(randomDigits).padStart(9, "0");
+    return ssnStr.replace(/(\d{3})(\d{2})(\d{4})/, "$1-$2-$3");
+  }
 
-function getRandomSSN() {
-  const randomDigits = Math.floor(Math.random() * 10000000); // Generate a random 7-digit number
-  const formattedSSN = String(randomDigits).padStart("", "");
-  return formattedSSN.replace(/(\d{3})(\d{2})(\d{2})/, "$1-$2-$3");
-}
-
-function getRandomDOB() {
-  const randomMonth = String(Math.floor(Math.random() * 12) + 1).padStart(2, "0");
-  const randomDay = String(Math.floor(Math.random() * 28) + 1).padStart(2, "0");
-  const randomYear = String(Math.floor(Math.random() * 50) + 1950);
-  return randomMonth + "/" + randomDay + "/" + randomYear;
-}
-
-
-
-
+  function getRandomDOB() {
+    const month = String(Math.floor(Math.random() * 12) + 1).padStart(2, "0");
+    const day = String(Math.floor(Math.random() * 28) + 1).padStart(2, "0");
+    const year = String(Math.floor(Math.random() * 50) + 1955);
+    return `${month}/${day}/${year}`;
+  }
 </script>
 
 </body>
-
 </html>
-
