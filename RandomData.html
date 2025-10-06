@@ -93,52 +93,54 @@ const randomSSNElement = document.getElementById("randomSSN");
 const randomDOBElement = document.getElementById("randomDOB");
 
 generateButton.addEventListener("click", function() {
-  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
   const randomIndex = Math.floor(Math.random() * alphabet.length);
   const randomLetter = alphabet[randomIndex];
-  const randomFirstName = getRandomName(randomLetter);
-  const randomLastName = getRandomName(randomLetter);
   const randomSSN = getRandomSSN();
   const randomDOB = getRandomDOB();
 
-  randomNameElement.textContent = "Name: " + randomFirstName + " " + randomLastName;
   randomSSNElement.textContent = "SSN: " + randomSSN;
   randomDOBElement.textContent = "Date of Birth: " + randomDOB;
 });
 
-function getRandomName(startingLetter) {
-  const vowels = "AEIOU";
-  const consonants = "BCDFGHJKLMNPQRSTVWXYZ1234567890";
+async function generateRandomProfile() {
+  const res = await fetch("https://randomuser.me/api/?inc=name&nat=us");
+  const data = await res.json();
+  const { first, last } = data.results[0].name;
+  const randomSSN = getRandomSSN();
+  const randomDOB = getRandomDOB();
 
-  const getRandomChar = (characters) => characters[Math.floor(Math.random() * characters.length)];
+  randomNameElement.textContent = `Name: ${first} ${last}`;
+  randomSSNElement.textContent = `SSN: ${randomSSN}`;
+  randomDOBElement.textContent = `Date of Birth: ${randomDOB}`;
+}
 
-  const randomNameLength = Math.floor(Math.random() * 7) + 5; // Random length between 3 and 7 characters
-  let name = startingLetter;
+generateButton.addEventListener("click", generateRandomProfile);
 
-  for (let i = 1; i < randomNameLength; i++) {
-    if (i % 2 === 0) {
-      name += getRandomChar(vowels);
-    } else {
-      name += getRandomChar(consonants);
-    }
   }
 
   return name;
 }
 
 function getRandomSSN() {
-  const randomDigits = Math.floor(Math.random() * 1000000000); // Generate a random 7-digit number
-  const formattedSSN = String(randomDigits).padStart(0, "");
+  const randomDigits = Math.floor(Math.random() * 10000000); // Generate a random 7-digit number
+  const formattedSSN = String(randomDigits).padStart("", "");
   return formattedSSN.replace(/(\d{3})(\d{2})(\d{2})/, "$1-$2-$3");
 }
 
 function getRandomDOB() {
   const randomMonth = String(Math.floor(Math.random() * 12) + 1).padStart(2, "0");
-  const randomDay = String(Math.floor(Math.random() * 31) + 1).padStart(2, "0");
-  const randomYear = String(Math.floor(Math.random() * 50) + 1955);
+  const randomDay = String(Math.floor(Math.random() * 28) + 1).padStart(2, "0");
+  const randomYear = String(Math.floor(Math.random() * 50) + 1950);
   return randomMonth + "/" + randomDay + "/" + randomYear;
+}
+
+
+
+
+
 }
 </script>
 
 </body>
+
 </html>
